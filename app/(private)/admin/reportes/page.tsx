@@ -18,7 +18,6 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { 
   faDownload,
-  faTrendingUp,
   faUsers,
   faHome,
   faDollarSign,

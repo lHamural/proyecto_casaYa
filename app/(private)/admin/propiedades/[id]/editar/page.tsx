@@ -104,6 +104,7 @@ export default async function EditarPropiedadPage({ params }: PageProps) {
           Actualiza la información de tu propiedad
         </p>
       </div>
+      {limits && (
       <PropiedadForm
         tipos={tipos}
         categorias={categorias}
@@ -112,6 +113,7 @@ export default async function EditarPropiedadPage({ params }: PageProps) {
         initialData={initialData}
         isEditing={true}
       />
+      )}
     </div>
   )
 }

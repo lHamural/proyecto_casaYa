@@ -203,7 +203,6 @@ export default async function UsuariosPage() {
                         <DeleteUsuarioButton
                           usuarioId={usuario.id}
                           usuarioName={usuario.name || 'Usuario'}
-                          usuarioEmail={usuario.email}
                         />
                       </div>
                     </TableCell>

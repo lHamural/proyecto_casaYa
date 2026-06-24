@@ -7,6 +7,7 @@ import { X, Image as ImageIcon, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import Image from 'next/image'
+import type { OurFileRouter } from '@/lib/updaloadting'
 
 interface ImageUploadProps {
   onImagesChange: (urls: string[]) => void
@@ -14,10 +15,10 @@ interface ImageUploadProps {
   maxImages?: number
 }
 
-export function ImageUpload({ 
-  onImagesChange, 
-  initialImages = [], 
-  maxImages = 10 
+export function ImageUpload({
+  onImagesChange,
+  initialImages = [],
+  maxImages = 10
 }: ImageUploadProps) {
   const [images, setImages] = useState<string[]>(initialImages)
   const [isUploading, setIsUploading] = useState(false)
@@ -59,7 +60,7 @@ export function ImageUpload({
 
       {/* Dropzone para subir nuevas imágenes */}
       {images.length < maxImages && (
-        <UploadDropzone
+        <UploadDropzone<OurFileRouter, "propertyImage">
           endpoint="propertyImage"
           onClientUploadComplete={(res) => {
             const urls = res?.map(r => r.url) || []

@@ -4,6 +4,7 @@ export const runtime = 'nodejs'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { groq } from '@/lib/groq'
+import type { ChatCompletionMessageParam } from 'groq-sdk/resources/chat/completions'
 
 console.log('🔑 GROQ_API_KEY en chat:', process.env.GROQ_API_KEY ? '✅ Presente' : '❌ Ausente')
 
@@ -84,10 +85,10 @@ export async function POST(request: Request) {
     console.log('📜 Historial completo:', historial.length, 'mensajes')
 
     // ✅ Construir mensajes con TODO el contexto
-    const messages = [
+    const messages: ChatCompletionMessageParam[] = [
       { role: 'system', content: SYSTEM_PROMPT },
       ...historial.map(msg => ({
-        role: msg.role === 'USER' ? 'user' : 'assistant',
+        role: (msg.role === 'USER' ? 'user' : 'assistant') as 'user' | 'assistant',
         content: msg.content,
       })),
     ]
@@ -135,7 +136,7 @@ export async function POST(request: Request) {
     })
   } catch (error) {
     console.error('❌ Error en chat:', error)
-    return NextResponse.json({ 
+    return NextResponse.json({
       success: false,
       error: 'Error al procesar mensaje',
       details: error instanceof Error ? error.message : 'Error desconocido'

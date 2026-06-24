@@ -27,7 +27,7 @@ export default async function EditarPropiedadPage({ params }: PageProps) {
       features: {
         include: { feature: true },
       },
-      virtualTour: true,
+      virtualTours: true,
       propertyType: true,
       propertyCategory: true,
     },
@@ -94,7 +94,7 @@ export default async function EditarPropiedadPage({ params }: PageProps) {
       featureId: f.featureId,
       feature: f.feature,
     })),
-    virtualTour: propiedad.virtualTour,
+    virtualTour: propiedad.virtualTours?.[0] || null,
   }
 
   return (
@@ -105,6 +105,7 @@ export default async function EditarPropiedadPage({ params }: PageProps) {
           Actualiza la información de tu propiedad
         </p>
       </div>
+      {limits && (
       <PropiedadForm
         tipos={tipos}
         categorias={categorias}
@@ -113,6 +114,7 @@ export default async function EditarPropiedadPage({ params }: PageProps) {
         initialData={initialData}
         isEditing={true}
       />
+      )}
     </div>
   )
 }

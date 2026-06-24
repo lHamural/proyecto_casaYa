@@ -6,10 +6,11 @@ import { useSession, signOut } from 'next-auth/react'
 import { DashboardFooter } from './DashboardFooter'
 import { DashboardHeader } from './DashboardHeader'
 import { DashboardSidebar } from './DashboarSidebar'
+import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 
 interface MenuItem {
   title: string
-  icon: string
+  icon: IconDefinition | string
   href?: string
   exact?: boolean
   key?: string

@@ -84,9 +84,9 @@ const usuariosFormateados = usuarios.map((user: any) => ({
 
   // Estadísticas
   const totalUsuarios = usuarios.length
-  const activos = usuarios.filter(u => u.isActive).length
-  const propietarios = usuarios.filter(u => u.role === 'PROPIETARIO').length
-  const inmobiliarias = usuarios.filter(u => u.role === 'INMOBILIARIA').length
+  const activos = usuarios.filter((u: any) => u.isActive).length
+const propietarios = usuarios.filter((u: any) => u.role === 'PROPIETARIO').length
+const inmobiliarias = usuarios.filter((u: any) => u.role === 'INMOBILIARIA').length
 
   const stats = [
     {

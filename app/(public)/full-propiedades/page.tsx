@@ -191,7 +191,10 @@ export default async function FullPropiedadesPage({ searchParams }: PageProps) {
   {propiedades.map((property) => (
     <PropertyCard 
       key={property.id} 
-      property={property} 
+      property={{
+  ...property,
+  createdAt: property.createdAt.toISOString(),
+}}
     />
   ))}
 </div>

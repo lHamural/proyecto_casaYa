@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Calendar, CreditCard, History, CheckCircle, XCircle, Clock } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
+import type { JSX } from 'react'
 
 interface Subscription {
   id: string

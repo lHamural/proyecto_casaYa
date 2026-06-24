@@ -14,9 +14,9 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { 
-  faCrown, 
-  faCheckCircle, 
+import {
+  faCrown,
+  faCheckCircle,
   faTimesCircle,
   faClock,
   faCalendarAlt,
@@ -67,12 +67,12 @@ export default async function AdminSuscripcionesPage() {
   const activas = suscripciones.filter(s => s.status === 'ACTIVE').length
   const expiradas = suscripciones.filter(s => s.status === 'EXPIRED').length
   const canceladas = suscripciones.filter(s => s.status === 'CANCELLED').length
-  
+
   // Ingresos totales
   const ingresosTotales = suscripciones
     .filter(s => s.status === 'ACTIVE' || s.status === 'EXPIRED')
     .reduce((sum, s) => sum + (s.plan?.price || 0), 0)
-  
+
   // Ingresos del mes actual
   const ahora = new Date()
   const inicioMes = new Date(ahora.getFullYear(), ahora.getMonth(), 1)
@@ -139,33 +139,33 @@ export default async function AdminSuscripcionesPage() {
   }
 
   const stats = [
-    { 
-      label: 'Total Suscripciones', 
-      value: totalSuscripciones, 
+    {
+      label: 'Total Suscripciones',
+      value: totalSuscripciones,
       icon: faHistory,
       color: 'text-blue-600',
       bg: 'bg-blue-50',
       border: 'border-blue-100'
     },
-    { 
-      label: 'Activas', 
-      value: activas, 
+    {
+      label: 'Activas',
+      value: activas,
       icon: faCheckCircle,
       color: 'text-green-600',
       bg: 'bg-green-50',
       border: 'border-green-100'
     },
-    { 
-      label: 'Ingresos Totales', 
-      value: `$${ingresosTotales.toFixed(2)}`, 
+    {
+      label: 'Ingresos Totales',
+      value: `$${ingresosTotales.toFixed(2)}`,
       icon: faDollarSign,
       color: 'text-emerald-600',
       bg: 'bg-emerald-50',
       border: 'border-emerald-100'
     },
-    { 
-      label: 'Ingresos del Mes', 
-      value: `$${ingresosMes.toFixed(2)}`, 
+    {
+      label: 'Ingresos del Mes',
+      value: `$${ingresosMes.toFixed(2)}`,
       icon: faChartLine,
       color: 'text-purple-600',
       bg: 'bg-purple-50',
@@ -176,7 +176,7 @@ export default async function AdminSuscripcionesPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-10">
       <div className="container-custom max-w-7xl mx-auto px-6">
-    
+
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -259,8 +259,8 @@ export default async function AdminSuscripcionesPage() {
                 </TableHeader>
                 <TableBody>
                   {suscripciones.map((suscripcion) => (
-                    <TableRow 
-                      key={suscripcion.id} 
+                    <TableRow
+                      key={suscripcion.id}
                       className="hover:bg-muted/30 transition-colors"
                     >
                       <TableCell>
@@ -282,8 +282,8 @@ export default async function AdminSuscripcionesPage() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <FontAwesomeIcon 
-                            icon={getPlanIcon(suscripcion.plan?.name)} 
+                          <FontAwesomeIcon
+                            icon={getPlanIcon(suscripcion.plan?.name)}
                             className={cn("w-4 h-4", getPlanColor(suscripcion.plan?.name))}
                           />
                           <span className="font-medium">{suscripcion.plan?.name || 'Sin plan'}</span>
@@ -303,11 +303,12 @@ export default async function AdminSuscripcionesPage() {
                         })}
                       </TableCell>
                       <TableCell className="text-sm">
-                        {new Date(suscripcion.expiresAt).toLocaleDateString('es-ES', {
-                          day: '2-digit',
-                          month: 'short',
-                          year: 'numeric'
-                        })}
+                        {suscripcion.endDate
+                          ? new Date(suscripcion.endDate).toLocaleDateString('es-ES', {
+                            day: '2-digit',
+                            month: 'short',
+                            year: 'numeric'
+                          }) : 'Sin fecha'}
                       </TableCell>
                       <TableCell className="text-center">
                         {/* <Button 

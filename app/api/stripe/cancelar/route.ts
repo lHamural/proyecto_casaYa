@@ -12,7 +12,7 @@ export async function POST() {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
     }
 
-    const subscription = await prisma.subscription.findUnique({
+    const subscription = await prisma.subscription.findFirst({
       where: { userId: session.user.id },
     })
 
@@ -29,7 +29,7 @@ export async function POST() {
     })
 
     await prisma.subscription.update({
-      where: { userId: session.user.id },
+  where: { id: subscription.id },
       data: { status: 'CANCELLED' },
     })
 

@@ -21,13 +21,12 @@ export async function POST(request: Request) {
     // Guardar mensaje de contacto
     const contacto = await prisma.contactMessage.create({
       data: {
-        name: nombre,
+        nombre,
         email,
-        phone: telefono || '',
-        subject: asunto || 'Consulta general',
-        message: mensaje,
-        userId: session?.user?.id,
-        status: 'PENDING',
+        telefono: telefono || null,
+        asunto: asunto || 'Consulta general',
+        mensaje,
+        userId: session?.user?.id || null,
       },
     })
 

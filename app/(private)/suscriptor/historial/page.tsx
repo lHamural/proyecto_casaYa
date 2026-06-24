@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { 
+import {
   faCrown,
   faCheckCircle,
   faTimesCircle,
@@ -52,7 +52,7 @@ export default async function SuscripcionPage({
 
   const [subscriptionActiva, historial] = await Promise.all([
     prisma.subscription.findFirst({
-      where: { 
+      where: {
         userId: session.user.id,
         status: 'ACTIVE'
       },
@@ -60,7 +60,7 @@ export default async function SuscripcionPage({
       orderBy: { createdAt: 'desc' },
     }),
     prisma.subscription.findMany({
-      where: { 
+      where: {
         userId: session.user.id,
       },
       include: { plan: true },
@@ -74,13 +74,13 @@ export default async function SuscripcionPage({
     ? Math.max(0, Math.ceil((new Date(subscriptionActiva.endDate).getTime() - Date.now()) / (1000 * 3600 * 24)))
     : null
 
-  const planColor = subscriptionActiva?.plan?.name?.toLowerCase().includes('premium') 
-    ? 'from-amber-500 to-yellow-500' 
+  const planColor = subscriptionActiva?.plan?.name?.toLowerCase().includes('premium')
+    ? 'from-amber-500 to-yellow-500'
     : subscriptionActiva?.plan?.name?.toLowerCase().includes('empresarial')
-    ? 'from-purple-500 to-indigo-500'
-    : subscriptionActiva?.plan?.name?.toLowerCase().includes('vip')
-    ? 'from-rose-500 to-pink-500'
-    : 'from-blue-500 to-cyan-500'
+      ? 'from-purple-500 to-indigo-500'
+      : subscriptionActiva?.plan?.name?.toLowerCase().includes('vip')
+        ? 'from-rose-500 to-pink-500'
+        : 'from-blue-500 to-cyan-500'
 
   const getStatusBadge = (status: string) => {
     const styles = {
@@ -133,7 +133,7 @@ export default async function SuscripcionPage({
         {/* Hero Section */}
         <div className="relative bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 text-white rounded-3xl p-8 mb-8 overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(at_top_right,#4f46e520_0%,transparent_50%)]" />
-          
+
           <div className="relative z-10">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               <div className="flex items-center gap-4">
@@ -153,7 +153,7 @@ export default async function SuscripcionPage({
               <div className="flex flex-wrap gap-3">
                 <Badge className={cn(
                   "px-5 py-3 text-base backdrop-blur-xl border transition-all",
-                  subscriptionActiva 
+                  subscriptionActiva
                     ? "bg-green-400/10 hover:bg-green-400/20 text-green-300 border-green-400/30"
                     : "bg-gray-400/10 hover:bg-gray-400/20 text-gray-300 border-gray-400/30"
                 )}>
@@ -180,7 +180,7 @@ export default async function SuscripcionPage({
                   <span className="font-medium">{daysLeft} días restantes</span>
                 </div>
                 <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                  <div 
+                  <div
                     className={cn(
                       "h-full bg-gradient-to-r rounded-full transition-all duration-1000",
                       planColor
@@ -264,11 +264,12 @@ export default async function SuscripcionPage({
                     <div>
                       <p className="text-xs text-muted-foreground">Fecha de expiración</p>
                       <p className="font-medium">
-                        {new Date(subscriptionActiva.expiresAt).toLocaleDateString('es-ES', {
-                          day: '2-digit',
-                          month: 'long',
-                          year: 'numeric'
-                        })}
+                        {subscriptionActiva.endDate
+                          ? new Date(subscriptionActiva.endDate).toLocaleDateString('es-ES', {
+                            day: '2-digit',
+                            month: 'long',
+                            year: 'numeric'
+                          }) : 'Sin fecha'}
                       </p>
                     </div>
                   </div>
@@ -291,7 +292,7 @@ export default async function SuscripcionPage({
                     </div>
                     <div>
                       <p className="text-xs text-muted-foreground">Duración</p>
-                      <p className="font-medium">{subscriptionActiva.plan.duration} días</p>
+                      <p className="font-medium">{subscriptionActiva.plan.durationDays} días</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3 p-3 bg-amber-50 rounded-xl">
@@ -330,7 +331,7 @@ export default async function SuscripcionPage({
                 <div>
                   <h3 className="text-xl font-semibold text-gray-800">Sin suscripción activa</h3>
                   <p className="text-gray-500 mt-1 max-w-sm">
-                    No tienes ninguna suscripción activa actualmente. 
+                    No tienes ninguna suscripción activa actualmente.
                     Adquiere un plan para publicar tus propiedades.
                   </p>
                 </div>
@@ -364,12 +365,12 @@ export default async function SuscripcionPage({
                 {historial.map((item) => {
                   const isActive = item.status === 'ACTIVE'
                   return (
-                    <div 
-                      key={item.id} 
+                    <div
+                      key={item.id}
                       className={cn(
                         "flex flex-col md:flex-row md:items-center justify-between p-4 rounded-xl border-2 transition-all hover:shadow-md",
-                        isActive 
-                          ? "border-green-200 bg-green-50/30 hover:border-green-300" 
+                        isActive
+                          ? "border-green-200 bg-green-50/30 hover:border-green-300"
                           : "border-gray-100 hover:border-gray-200"
                       )}
                     >
@@ -378,8 +379,8 @@ export default async function SuscripcionPage({
                           "p-2.5 rounded-lg",
                           isActive ? "bg-green-100" : "bg-gray-100"
                         )}>
-                          <FontAwesomeIcon 
-                            icon={getPlanIcon(item.plan.name)} 
+                          <FontAwesomeIcon
+                            icon={getPlanIcon(item.plan.name)}
                             className={cn("w-5 h-5", getPlanColor(item.plan.name))}
                           />
                         </div>
@@ -399,11 +400,12 @@ export default async function SuscripcionPage({
                             </span>
                             <span className="flex items-center gap-1.5">
                               <FontAwesomeIcon icon={faCalendarAlt} className="w-3.5 h-3.5" />
-                              Expira: {new Date(item.expiresAt).toLocaleDateString('es-ES', {
-                                day: '2-digit',
-                                month: 'short',
-                                year: 'numeric'
-                              })}
+                              Expira: {item.endDate
+                                ? new Date(item.endDate).toLocaleDateString('es-ES', {
+                                  day: '2-digit',
+                                  month: 'short',
+                                  year: 'numeric'
+                                }) : 'Sin fecha'}
                             </span>
                             {item.status === 'CANCELLED' && (
                               <span className="flex items-center gap-1.5 text-red-500">
@@ -419,7 +421,7 @@ export default async function SuscripcionPage({
                           ${item.plan.price}
                         </span>
                         <span className="text-sm text-muted-foreground">
-                          {item.plan.duration} días
+                          {item.plan.durationDays} días
                         </span>
                         {isActive && (
                           <Badge className="bg-green-500 text-white border-0 px-3 py-1">

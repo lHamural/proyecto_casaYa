@@ -127,6 +127,7 @@ model User {
   articles         Article[]
   propertyViews    PropertyView[]
   accounts         Account[]
+  contactMessages ContactMessage[]
 
   @@map("users")
 }
@@ -432,7 +433,19 @@ model ChatMessage {
 
   @@map("chat_messages")
 }
+model ContactMessage {
+  id        String   @id @default(cuid())
+  nombre    String
+  email     String
+  telefono  String?
+  asunto    String?
+  mensaje   String
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
 
+  @@map("contact_messages")
+}
 // ─────────────────────────────────────────
 // BLOG / CONTENIDO
 // ─────────────────────────────────────────

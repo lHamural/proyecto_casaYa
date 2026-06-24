@@ -134,7 +134,9 @@ export default function WebsiteLayout({
   const getPanelLink = () => {
     const role = session?.user?.role
     if (role === 'SUPERADMIN') return '/admin'
-    if (role === 'SUSCRIPTOR') return '/suscriptor'
+    if (role === 'PROPIETARIO') return '/suscriptor'
+    if (role === 'VISITANTE') return '/suscriptor'
+    if (role === 'INMOBILIARIA') return '/suscriptor'
     return '/login'
   }
 

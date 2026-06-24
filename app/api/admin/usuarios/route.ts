@@ -30,7 +30,7 @@ export async function GET(request: Request) {
         isActive: true,
         createdAt: true,
         avatar: true,
-        subscription: {
+        subscriptions: {
           select: {
             status: true,
             plan: {

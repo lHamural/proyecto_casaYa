@@ -22,7 +22,7 @@ export async function GET(
         isActive: true,
         avatar: true,
         createdAt: true,
-        subscription: {
+        subscriptions: {
           select: {
             status: true,
             startDate: true,

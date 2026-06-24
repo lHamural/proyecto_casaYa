@@ -32,7 +32,7 @@ import {
   faExclamationTriangle,
   faArrowRight,
   faList,
-  faGrid2,
+ faTableCells,
   faFilter,
   faSort,
   faSearch

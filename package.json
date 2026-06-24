@@ -29,6 +29,7 @@
     "cloudinary": "^2.10.0",
     "clsx": "^2.1.1",
     "date-fns": "^4.4.0",
+    "dotenv": "^17.4.2",
     "groq-sdk": "^1.2.1",
     "leaflet": "^1.9.4",
     "lucide-react": "^1.20.0",

@@ -50,6 +50,7 @@ interface Comentario {
 
 interface PropertyCardProps {
   property: {
+    description?: string | null
     id: string
     title: string
     price: number

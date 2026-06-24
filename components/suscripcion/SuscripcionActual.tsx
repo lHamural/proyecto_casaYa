@@ -9,7 +9,7 @@ import { Calendar, CreditCard, AlertCircle, Zap } from 'lucide-react'
 
 interface SuscripcionActualProps {
   subscription: {
-    plan: { name: string; maxProperties: number; maxImages: number; price: number }
+    plan: { name: string; maxProperties: number;durationDays: number; maxImages: number; price: number }
     status: string
     startDate?: Date | null
     endDate?: Date | null

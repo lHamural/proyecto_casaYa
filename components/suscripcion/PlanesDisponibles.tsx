@@ -88,7 +88,7 @@ export default function PlanesDisponibles({
   }
 
   // Ordenar planes: GRATUITO, BASICO, PROFESIONAL, PREMIUM
-  const ordenPlanes = { GRATUITO: 0, BASICO: 1, PROFESIONAL: 2, PREMIUM: 3 }
+ const ordenPlanes: Record<string, number> = { GRATUITO: 0, BASICO: 1, PROFESIONAL: 2, PREMIUM: 3 }
   const planesOrdenados = [...planes].sort((a, b) => ordenPlanes[a.name] - ordenPlanes[b.name])
 
   return (
