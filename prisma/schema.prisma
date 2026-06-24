@@ -1,0 +1,476 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+  output          = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────
+// ENUMS
+// ─────────────────────────────────────────
+
+enum Role {
+  SUPERADMIN
+  INMOBILIARIA
+  PROPIETARIO
+  VISITANTE
+}
+
+enum PlanName {
+  GRATUITO
+  BASICO
+  PLATINO
+  PREMIUM
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELLED
+  EXPIRED
+  PENDING
+}
+
+enum PropertyStatus {
+  DRAFT
+  PUBLISHED
+  PAUSED
+  SOLD
+  RENTED
+}
+
+enum OperationType {
+  VENTA
+  ALQUILER
+  ANTICRETICO
+}
+
+enum PropertyCategoryName {
+  CASA
+  DEPARTAMENTO
+  TERRENO
+  OFICINA
+  LOCAL_COMERCIAL
+  HOTEL
+  CAMPO
+  OTRO
+}
+
+enum Currency {
+  BOB
+  USD
+}
+
+enum ContactChannel {
+  EMAIL
+  WHATSAPP
+  PHONE
+}
+
+enum ChatRole {
+  USER
+  BOT
+}
+
+enum NotificationType {
+  LIKE
+  COMMENT
+  CONTACT
+  SUBSCRIPTION
+  SYSTEM
+  PROPERTY_EXPIRED
+}
+
+enum ArticleCategory {
+  CONSEJOS
+  LEYES
+  MERCADO
+  NOTICIAS
+}
+
+enum TourProvider {
+  MATTERPORT
+  KUULA
+  CUSTOM
+}
+
+// ─────────────────────────────────────────
+// USUARIOS Y ACCESO
+// ─────────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  password      String?
+  phone         String?
+  whatsapp      String?
+  avatar        String?
+  role          Role      @default(VISITANTE)
+  isActive      Boolean   @default(true)
+  emailVerified DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relaciones
+  subscriptions  Subscription[]
+  properties       Property[]
+  likes            Like[]
+  favorites        Favorite[]
+  comments         Comment[]
+  contactRequests  ContactRequest[]
+  chatSessions     ChatSession[]
+  notifications    Notification[]
+  articles         Article[]
+  propertyViews    PropertyView[]
+  accounts         Account[]
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+// ─────────────────────────────────────────
+// PLANES Y SUSCRIPCIONES
+// ─────────────────────────────────────────
+
+model Plan {
+  id                 String    @id @default(cuid())
+  name               PlanName  @unique
+  price              Float
+  currency           Currency  @default(USD)
+  description        String?
+  maxProperties      Int       @default(3)
+  maxImages          Int       @default(5)
+  allowVirtualTour   Boolean   @default(false)
+  allowHighlight     Boolean   @default(false)
+  allowWhatsapp      Boolean   @default(false)
+  allowStats         Boolean   @default(false)
+  stripePriceId      String?
+  durationDays       Int       @default(30)
+  isActive           Boolean   @default(true)
+  createdAt          DateTime  @default(now())
+
+  subscriptions Subscription[]
+  properties    Property[]
+
+  @@map("plans")
+}
+
+// prisma/schema.prisma
+model Subscription {
+  id                   String   @id @default(cuid())
+  userId               String   
+  planId               String
+  status               String   @default("PENDING") // ACTIVE, CANCELLED, EXPIRED
+  stripeSubscriptionId String?
+  stripeCustomerId     String?
+  startDate            DateTime
+  endDate              DateTime?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan Plan @relation(fields: [planId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@map("subscriptions")
+}
+
+// ─────────────────────────────────────────
+// PROPIEDADES
+// ─────────────────────────────────────────
+
+model PropertyType {
+  id         String        @id @default(cuid())
+  name       OperationType @unique
+  properties Property[]
+
+  @@map("property_types")
+}
+
+model PropertyCategory {
+  id         String               @id @default(cuid())
+  name       PropertyCategoryName @unique
+  properties Property[]
+
+  @@map("property_categories")
+}
+
+model PropertyFeature {
+  id         String                @id @default(cuid())
+  name       String                @unique
+  icon       String?
+  properties PropertyFeatureMap[]
+
+  @@map("property_features")
+}
+
+model Property {
+  id                 String         @id @default(cuid())
+  userId             String
+  planId             String?
+  propertyTypeId     String
+  propertyCategoryId String
+  title              String
+  slug               String         @unique
+  description        String
+  price              Float
+  currency           Currency       @default(USD)
+  priceNegotiable    Boolean        @default(false)
+  area               Float?
+  bedrooms           Int?
+  bathrooms          Int?
+  garage             Boolean        @default(false)
+  floors             Int?
+  antiquity          Int?
+  furnished          Boolean        @default(false)
+  address            String?
+  city               String
+  department         String
+  zone               String?
+  latitude           Float?
+  longitude          Float?
+  isHighlighted      Boolean        @default(false)
+  status             PropertyStatus @default(DRAFT)
+  viewCount          Int            @default(0)
+  contactCount       Int            @default(0)
+  expiresAt          DateTime?
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+
+  // Relaciones
+  user             User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan             Plan?                @relation(fields: [planId], references: [id])
+  propertyType     PropertyType         @relation(fields: [propertyTypeId], references: [id])
+  propertyCategory PropertyCategory     @relation(fields: [propertyCategoryId], references: [id])
+  images           PropertyImage[]
+  features         PropertyFeatureMap[]
+  virtualTours VirtualTour[]
+  likes            Like[]
+  favorites        Favorite[]
+  comments         Comment[]
+  contactRequests  ContactRequest[]
+  propertyViews    PropertyView[]
+
+  @@map("properties")
+}
+
+// prisma/schema.prisma
+model PropertyImage {
+  id                 String   @id @default(cuid())
+  propertyId         String?  // ← HACER OPCIONAL (agregar ?)
+  originalPath       String
+  webpPath           String
+  thumbPath          String
+  originalName       String?
+  size               Int?
+  width              Int?
+  height             Int?
+  isPrimary          Boolean  @default(false)
+  order              Int      @default(0)
+  createdAt          DateTime @default(now())
+
+  property Property? @relation(fields: [propertyId], references: [id], onDelete: Cascade)  // ← HACER OPCIONAL
+
+  @@map("property_images")
+}
+
+model PropertyFeatureMap {
+  id        String @id @default(cuid())
+  propertyId String
+  featureId  String
+
+  property Property        @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  feature  PropertyFeature @relation(fields: [featureId], references: [id], onDelete: Cascade)
+
+  @@unique([propertyId, featureId])
+  @@map("property_feature_map")
+}
+
+model VirtualTour {
+  id            String      @id @default(cuid())
+  propertyId    String
+  imagePath     String      // imagen 360 WebP procesada
+  originalPath  String      // imagen 360 original
+  title         String?
+  description   String?
+  provider      TourProvider @default(CUSTOM)
+  order         Int         @default(0)
+  createdAt     DateTime    @default(now())
+
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@map("virtual_tours")
+}
+
+// ─────────────────────────────────────────
+// INTERACCIÓN SOCIAL
+// ─────────────────────────────────────────
+
+model Like {
+  id         String   @id @default(cuid())
+  userId     String
+  propertyId String
+  createdAt  DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, propertyId])
+  @@map("likes")
+}
+
+model Favorite {
+  id         String   @id @default(cuid())
+  userId     String
+  propertyId String
+  createdAt  DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, propertyId])
+  @@map("favorites")
+}
+
+model Comment {
+  id         String   @id @default(cuid())
+  userId     String
+  propertyId String
+  parentId   String?
+  content    String
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  property Property  @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  parent   Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies  Comment[] @relation("CommentReplies")
+
+  @@map("comments")
+}
+
+model PropertyView {
+  id         String   @id @default(cuid())
+  propertyId String
+  userId     String?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  user     User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("property_views")
+}
+
+// ─────────────────────────────────────────
+// CONTACTO Y CONSULTAS
+// ─────────────────────────────────────────
+
+model ContactRequest {
+  id         String         @id @default(cuid())
+  propertyId String
+  fromUserId String?
+  name       String
+  email      String
+  phone      String?
+  message    String
+  channel    ContactChannel @default(EMAIL)
+  createdAt  DateTime       @default(now())
+
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  fromUser User?    @relation(fields: [fromUserId], references: [id], onDelete: SetNull)
+
+  @@map("contact_requests")
+}
+
+model ChatSession {
+  id           String   @id @default(cuid())
+  userId       String?
+  sessionToken String   @unique @default(cuid())
+  createdAt    DateTime @default(now())
+
+  user     User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  messages ChatMessage[]
+
+  @@map("chat_sessions")
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  sessionId String
+  role      ChatRole
+  content   String
+  createdAt DateTime @default(now())
+
+  session ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@map("chat_messages")
+}
+
+// ─────────────────────────────────────────
+// BLOG / CONTENIDO
+// ─────────────────────────────────────────
+
+model Article {
+  id          String          @id @default(cuid())
+  authorId    String
+  title       String
+  slug        String          @unique
+  content     String
+  coverImage  String?
+  category    ArticleCategory
+  isPublished Boolean         @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@map("articles")
+}
+
+// ─────────────────────────────────────────
+// NOTIFICACIONES
+// ─────────────────────────────────────────
+
+model Notification {
+  id          String           @id @default(cuid())
+  userId      String
+  title       String
+  message     String
+  type        NotificationType
+  isRead      Boolean          @default(false)
+  relatedId   String?
+  relatedType String?
+  createdAt   DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
