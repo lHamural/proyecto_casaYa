@@ -15,8 +15,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
-
-export default function AdminLayout({ children }) {
+import type { ReactNode } from 'react'
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-background">
       {/* Navbar con componentes shadcn */}
