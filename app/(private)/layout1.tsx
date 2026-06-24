@@ -1,6 +1,7 @@
 // app/(private)/suscriptor/layout.tsx
 import { DashboardLayout } from '@/components/dashboard'
 import '@/app/styles/dashboard.css'
+export const dynamic = 'force-dynamic'
 
 const suscriptorMenuItems = [
   { title: 'Dashboard', icon: '📊', href: '/suscriptor', exact: true },
