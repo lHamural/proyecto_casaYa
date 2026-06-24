@@ -1,11 +1,15 @@
-// app/api/upload/image/route.ts (versión sin Sharp)
+// app/api/upload/image/route.ts
 import { NextResponse } from 'next/server'
-import { writeFile, mkdir } from 'fs/promises'
-import path from 'path'
 import { auth } from '@/auth'
-import { v4 as uuidv4 } from 'uuid'
+import { v2 as cloudinary } from 'cloudinary'
 
 export const runtime = 'nodejs'
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+})
 
 export async function POST(request: Request) {
   try {
@@ -23,57 +27,70 @@ export async function POST(request: Request) {
 
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg']
     if (!allowedTypes.includes(file.type)) {
-      return NextResponse.json({ 
-        error: `Tipo no válido: ${file.type}` 
-      }, { status: 400 })
+      return NextResponse.json({ error: `Tipo no válido: ${file.type}` }, { status: 400 })
     }
 
     if (file.size > 10 * 1024 * 1024) {
-      return NextResponse.json({ 
-        error: 'La imagen no puede superar 10MB' 
-      }, { status: 400 })
+      return NextResponse.json({ error: 'La imagen no puede superar 10MB' }, { status: 400 })
     }
 
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
-    
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'original')
-    await mkdir(uploadDir, { recursive: true })
-    
-    const uuid = uuidv4()
-    const extension = file.name.split('.').pop()
-    const fileName = `${uuid}.${extension}`
-    const filePath = path.join(uploadDir, fileName)
-    
-    await writeFile(filePath, buffer)
-    
-    // Copiar a webp y thumbs (sin Sharp, solo copia)
-    const webpDir = path.join(process.cwd(), 'public', 'uploads', 'webp')
-    const thumbsDir = path.join(process.cwd(), 'public', 'uploads', 'thumbs')
-    await mkdir(webpDir, { recursive: true })
-    await mkdir(thumbsDir, { recursive: true })
-    
-    // Copiar el mismo archivo a webp y thumbs (como fallback)
-    const webpPath = path.join(webpDir, `${uuid}.webp`)
-    const thumbPath = path.join(thumbsDir, `${uuid}_thumb.webp`)
-    await writeFile(webpPath, buffer)
-    await writeFile(thumbPath, buffer)
+
+    const result = await new Promise<any>((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        {
+          folder: 'casaya/propiedades',
+          transformation: [{ quality: 'auto', fetch_format: 'auto' }],
+          eager: [
+            { width: 800, crop: 'limit', quality: 'auto', fetch_format: 'auto' },
+            { width: 300, height: 200, crop: 'fill', quality: 'auto', fetch_format: 'auto' },
+          ],
+        },
+        (error, result) => {
+          if (error) reject(error)
+          else resolve(result)
+        }
+      ).end(buffer)
+    })
 
     return NextResponse.json({
-      id: uuid,
-      originalPath: `/uploads/original/${fileName}`,
-      webpPath: `/uploads/webp/${uuid}.webp`,
-      thumbPath: `/uploads/thumbs/${uuid}_thumb.webp`,
+      id: result.public_id,
+      originalPath: result.secure_url,
+      webpPath: result.eager?.[0]?.secure_url || result.secure_url,
+      thumbPath: result.eager?.[1]?.secure_url || result.secure_url,
       originalName: file.name,
       size: file.size,
-      width: 800,
-      height: 600,
+      width: result.width,
+      height: result.height,
       isPrimary: false,
       order: 0,
     }, { status: 201 })
-    
+
   } catch (error) {
     console.error('Error:', error)
     return NextResponse.json({ error: 'Error al subir imagen' }, { status: 500 })
   }
-}   
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const session = await auth()
+    if (!session?.user) {
+      return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+    }
+
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get('id')
+
+    if (!id) {
+      return NextResponse.json({ error: 'ID requerido' }, { status: 400 })
+    }
+
+    await cloudinary.uploader.destroy(id)
+
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    return NextResponse.json({ error: 'Error al eliminar imagen' }, { status: 500 })
+  }
+}
