@@ -77,7 +77,7 @@ export default async function UsuariosPage() {
     },
   })
 
-  const usuariosFormateados = usuarios.map(user => ({
+const usuariosFormateados = usuarios.map((user: any) => ({
     ...user,
     subscription: user.subscriptions[0] || null,
   }))
