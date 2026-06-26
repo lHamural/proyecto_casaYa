@@ -166,6 +166,7 @@ export default function ImageUploader({
                   alt={`Imagen ${index + 1}`}
                   width={200}
                   height={150}
+                  unoptimized
                   className="w-full h-32 object-cover"
                   onError={(e) => console.error('Error cargando imagen:', img.thumbPath, e)}
                 />

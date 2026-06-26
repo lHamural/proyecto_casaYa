@@ -97,6 +97,7 @@ export default function TourUploader({ value = [], onChange, maxTours = 5 }: Tou
                     src={tour.imagePath}
                     alt={tour.title}
                     fill
+                    unoptimized
                     className="object-cover"
                   />
                 ) : (

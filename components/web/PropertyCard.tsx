@@ -322,7 +322,7 @@ export function PropertyCard({ property, featured = false }: PropertyCardProps) 
         <div className="flex items-center gap-2 mb-1">
           <Avatar className="w-5 h-5">
             {user.avatar ? (
-              <Image src={user.avatar} alt={user.name} width={20} height={20} className="rounded-full object-cover w-full h-full" />
+              <Image src={user.avatar} alt={user.name} width={20} height={20} unoptimized className="rounded-full object-cover w-full h-full" />
             ) : (
               <AvatarFallback className="text-[9px] bg-gray-200 text-gray-700">
                 {getInitials(user.name)}

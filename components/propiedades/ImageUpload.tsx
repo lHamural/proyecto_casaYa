@@ -43,6 +43,7 @@ export function ImageUpload({
                   src={url}
                   alt={`Imagen ${index + 1}`}
                   fill
+                  unoptimized
                   className="object-cover"
                 />
               </div>
