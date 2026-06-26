@@ -1,15 +1,8 @@
-// app/api/upload/image/route.ts
 import { NextResponse } from 'next/server'
 import { auth } from '@/auth'
-import { v2 as cloudinary } from 'cloudinary'
+import { processImage, deleteImageFiles } from '@/lib/storage'
 
 export const runtime = 'nodejs'
-
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-})
 
 export async function POST(request: Request) {
   try {
@@ -37,30 +30,15 @@ export async function POST(request: Request) {
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
 
-    const result = await new Promise<any>((resolve, reject) => {
-      cloudinary.uploader.upload_stream(
-        {
-          folder: 'casaya/propiedades',
-          transformation: [{ quality: 'auto', fetch_format: 'auto' }],
-          eager: [
-            { width: 800, crop: 'limit', quality: 'auto', fetch_format: 'auto' },
-            { width: 300, height: 200, crop: 'fill', quality: 'auto', fetch_format: 'auto' },
-          ],
-        },
-        (error, result) => {
-          if (error) reject(error)
-          else resolve(result)
-        }
-      ).end(buffer)
-    })
+    const result = await processImage(buffer, file.name)
 
     return NextResponse.json({
-      id: result.public_id,
-      originalPath: result.secure_url,
-      webpPath: result.eager?.[0]?.secure_url || result.secure_url,
-      thumbPath: result.eager?.[1]?.secure_url || result.secure_url,
-      originalName: file.name,
-      size: file.size,
+      id: result.originalPath.replace('/uploads/original/', '').replace(/\.[^.]+$/, ''),
+      originalPath: result.originalPath,
+      webpPath: result.webpPath,
+      thumbPath: result.thumbPath,
+      originalName: result.originalName,
+      size: result.size,
       width: result.width,
       height: result.height,
       isPrimary: false,
@@ -81,13 +59,13 @@ export async function DELETE(request: Request) {
     }
 
     const { searchParams } = new URL(request.url)
-    const id = searchParams.get('id')
+    const path = searchParams.get('path')
 
-    if (!id) {
-      return NextResponse.json({ error: 'ID requerido' }, { status: 400 })
+    if (!path) {
+      return NextResponse.json({ error: 'path requerido' }, { status: 400 })
     }
 
-    await cloudinary.uploader.destroy(id)
+    deleteImageFiles(path)
 
     return NextResponse.json({ success: true })
   } catch (error) {

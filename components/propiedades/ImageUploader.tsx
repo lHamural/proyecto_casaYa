@@ -98,9 +98,9 @@ export default function ImageUploader({
   const handleRemove = async (index: number) => {
     const imageToRemove = images[index]
     
-    if (imageToRemove.id) {
+    if (imageToRemove.webpPath) {
       try {
-        await fetch(`/api/upload/imagen?id=${imageToRemove.id}`, {
+        await fetch(`/api/upload/image?path=${imageToRemove.webpPath}`, {
           method: 'DELETE',
         })
       } catch (error) {

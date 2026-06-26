@@ -245,7 +245,10 @@ export function PropertyCard({ property, featured = false }: PropertyCardProps) 
           )}
           {property.status === 'PUBLISHED' && (
             <Badge className="bg-green-100 text-green-700 text-[10px] font-medium rounded-full px-3 py-0.5 border border-green-200">
-              EN VENTA
+              {property.propertyType?.name === 'VENTA' ? 'EN VENTA' :
+               property.propertyType?.name === 'ALQUILER' ? 'EN ALQUILER' :
+               property.propertyType?.name === 'ANTICRETICO' ? 'ANTICRÉTICO' :
+               property.propertyType?.name || 'PUBLICADA'}
             </Badge>
           )}
           {property.isHighlighted && (
@@ -318,9 +321,13 @@ export function PropertyCard({ property, featured = false }: PropertyCardProps) 
         {/* Cabecera: agente + inmobiliaria */}
         <div className="flex items-center gap-2 mb-1">
           <Avatar className="w-5 h-5">
-            <AvatarFallback className="text-[9px] bg-gray-200 text-gray-700">
-              {getInitials(user.name)}
-            </AvatarFallback>
+            {user.avatar ? (
+              <Image src={user.avatar} alt={user.name} width={20} height={20} className="rounded-full object-cover w-full h-full" />
+            ) : (
+              <AvatarFallback className="text-[9px] bg-gray-200 text-gray-700">
+                {getInitials(user.name)}
+              </AvatarFallback>
+            )}
           </Avatar>
           <span className="text-xs font-medium text-gray-700 truncate">{user.name}</span>
           <span className="text-[10px] text-gray-400">·</span>

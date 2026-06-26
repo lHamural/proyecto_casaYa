@@ -78,6 +78,10 @@ export default function WebsiteLayout({
       ]
     },
     { 
+      title: 'Planes', 
+      href: '/precios',
+    },
+    { 
       title: 'Nosotros', 
       href: '/nosotros',
       dropdown: [
@@ -107,11 +111,21 @@ export default function WebsiteLayout({
       ]
     },
     {
+      title: 'Planes',
+      links: [
+        { title: 'Ver planes', href: '/precios' },
+        { title: 'Plan Gratuito', href: '/precios#gratuito' },
+        { title: 'Plan Básico', href: '/precios#basico' },
+        { title: 'Plan Platino', href: '/precios#platino' },
+        { title: 'Plan Premium', href: '/precios#premium' },
+      ]
+    },
+    {
       title: 'Sobre nosotros',
       links: [
         { title: 'Quiénes somos', href: '/nosotros' },
-        { title: 'Cómo funciona', href: '/como-funciona' },
-        { title: 'Testimonios', href: '/testimonios' },
+        { title: 'Cómo funciona', href: '/funcion' },
+        { title: 'FAQ', href: '/faq' },
         { title: 'Contacto', href: '/contacto' },
       ]
     },
@@ -137,6 +151,15 @@ export default function WebsiteLayout({
     if (role === 'PROPIETARIO') return '/suscriptor'
     if (role === 'VISITANTE') return '/suscriptor'
     if (role === 'INMOBILIARIA') return '/suscriptor'
+    return '/login'
+  }
+
+  const getPublishLink = () => {
+    const role = session?.user?.role
+    if (role === 'SUPERADMIN') return '/admin/propiedades'
+    if (role === 'PROPIETARIO') return '/suscriptor/propiedades'
+    if (role === 'VISITANTE') return '/suscriptor/propiedades'
+    if (role === 'INMOBILIARIA') return '/suscriptor/propiedades'
     return '/login'
   }
 
@@ -204,7 +227,7 @@ export default function WebsiteLayout({
             <div className="header-actions desktop-actions">
               {session?.user ? (
                 <>
-                  <Link href="/publicar-propiedad" className="btn-outline-light">
+                  <Link href={getPublishLink()} className="btn-outline-light">
                     Publicar Propiedad
                   </Link>
                   <Link href={getPanelLink()} className="btn-primary-light">
@@ -299,7 +322,7 @@ export default function WebsiteLayout({
               {session?.user ? (
                 <>
                   <Link 
-                    href="/publicar-propiedad" 
+                    href={getPublishLink()} 
                     className="mobile-outline-btn"
                     onClick={() => setMobileMenuOpen(false)}
                   >

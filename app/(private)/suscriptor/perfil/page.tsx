@@ -3,23 +3,16 @@ import { auth } from '@/auth'
 import { prisma } from '@/lib/prisma'
 import { redirect } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { 
-  User, 
-  Mail, 
-  Phone, 
   Calendar, 
   Shield, 
-  Save,
-  Camera,
   Building2,
   Home
 } from 'lucide-react'
 import PerfilForm from '@/components/perfil/PerfilForm'
+import AvatarUpload from '@/components/perfil/AvatarUpload'
 
 export default async function PerfilPage() {
   const session = await auth()
@@ -84,18 +77,11 @@ export default async function PerfilPage() {
             <CardContent className="pt-6">
               <div className="flex flex-col items-center text-center">
                 <div className="relative">
-                  <Avatar className="w-24 h-24">
-                    <AvatarFallback className="text-2xl bg-primary/10 text-primary">
-                      {getInitials(usuario.name || 'U')}
-                    </AvatarFallback>
-                  </Avatar>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="absolute -bottom-2 -right-2 rounded-full w-8 h-8 p-0"
-                  >
-                    <Camera className="w-4 h-4" />
-                  </Button>
+                  <AvatarUpload
+                    avatarUrl={usuario.avatar}
+                    userName={usuario.name || 'U'}
+                    initials={getInitials(usuario.name || 'U')}
+                  />
                 </div>
                 <h3 className="text-lg font-semibold mt-4">{usuario.name}</h3>
                 <p className="text-sm text-muted-foreground">{usuario.email}</p>

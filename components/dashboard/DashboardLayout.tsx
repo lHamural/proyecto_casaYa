@@ -3,6 +3,7 @@
 
 import { useState } from 'react'
 import { useSession, signOut } from 'next-auth/react'
+import Image from 'next/image'
 import { DashboardFooter } from './DashboardFooter'
 import { DashboardHeader } from './DashboardHeader'
 import { DashboardSidebar } from './DashboarSidebar'
@@ -38,6 +39,7 @@ export function DashboardLayout({
   const user = session?.user
   const userName = user?.name || user?.email?.split('@')[0] || 'Usuario'
   const userRole = user?.role || 'SUSCRIPTOR'
+  const userAvatar = (user as any)?.image || null
   const userInitial = userName.charAt(0).toUpperCase()
 
   const getCurrentTitle = () => {
@@ -46,10 +48,17 @@ export function DashboardLayout({
 
   if (status === 'loading') {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen bg-[#fafafa]">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-gray-600">Cargando...</p>
+          <Image
+            src="/image/logo.png"
+            alt="CasaYa"
+            width={80}
+            height={80}
+            className="mx-auto mb-6 animate-pulse"
+            priority
+          />
+          <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary border-t-transparent mx-auto" />
         </div>
       </div>
     )
@@ -70,6 +79,7 @@ export function DashboardLayout({
         userName={userName}
         userRole={userRole}
         userInitial={userInitial}
+        userAvatar={userAvatar}
         onLogout={handleLogout}
         sidebarOpen={sidebarOpen}
         onCloseSidebar={() => setSidebarOpen(false)}

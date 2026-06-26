@@ -1,15 +1,8 @@
-// app/api/upload/tour/route.ts
 import { NextResponse } from 'next/server'
 import { auth } from '@/auth'
-import { v2 as cloudinary } from 'cloudinary'
+import { processTourImage } from '@/lib/storage'
 
 export const runtime = 'nodejs'
-
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-})
 
 export async function POST(request: Request) {
   try {
@@ -37,25 +30,13 @@ export async function POST(request: Request) {
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
 
-    const result = await new Promise<any>((resolve, reject) => {
-      cloudinary.uploader.upload_stream(
-        {
-          folder: 'casaya/tours',
-          resource_type: 'image',
-          // Sin transformaciones para preservar la imagen 360° intacta
-        },
-        (error, result) => {
-          if (error) reject(error)
-          else resolve(result)
-        }
-      ).end(buffer)
-    })
+    const result = await processTourImage(buffer, file.name)
 
     return NextResponse.json({
-      path: result.secure_url,
-      originalPath: result.secure_url,
-      publicId: result.public_id,
-      title: file.name.replace(/\.[^/.]+$/, ''), // nombre sin extensión
+      path: result.path,
+      originalPath: result.originalPath,
+      publicId: result.path.replace('/uploads/tours/', '').replace(/\.[^.]+$/, ''),
+      title: file.name.replace(/\.[^/.]+$/, ''),
     }, { status: 201 })
 
   } catch (error) {

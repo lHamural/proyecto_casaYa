@@ -15,13 +15,9 @@ import {
   faEnvelope, 
   faLock, 
   faArrowRight,
-  faBuilding,
-  faHome,
-  faShieldAlt,
   faEye,
   faEyeSlash
 } from '@fortawesome/free-solid-svg-icons'
-import { cn } from '@/lib/utils'
 
 interface LoginFormProps {
   logoUrl?: string
@@ -62,45 +58,28 @@ export default function LoginForm({
     if (role === 'SUPERADMIN') {
       router.push('/admin')
     } else {
-      router.push('/dashboard')
+      router.push('/suscriptor')
     }
     router.refresh()
   }
 
   const handleGoogle = async () => {
     setLoadingGoogle(true)
-    await signIn('google', { callbackUrl: '/dashboard' })
+    await signIn('google', { callbackUrl: '/suscriptor' })
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-blue-50/30 p-4">
-      {/* Elementos decorativos de fondo */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/20 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-primary/20 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
-      </div>
-
-      <Card className="w-full max-w-md relative z-10 border-0 shadow-2xl shadow-primary/10 bg-white/80 backdrop-blur-xl">
-        {/* Logo y nombre de la página - Logo más grande sin fondo */}
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <Card className="w-full max-w-md border-0 shadow-2xl shadow-primary/10 bg-white/80 backdrop-blur-xl">
         <div className="flex flex-col items-center pt-10 px-6">
-          <div className="relative">
-            {logoUrl ? (
-              <Image 
-                src={logoUrl}
-                alt={siteName}
-                width={100}
-                height={100}
-                className="w-24 h-24 object-contain"
-                priority
-              />
-            ) : (
-              <div className="text-primary">
-                <FontAwesomeIcon icon={faHome} className="w-16 h-16" />
-              </div>
-            )}
-          </div>
-          
+          <Image 
+            src={logoUrl}
+            alt={siteName}
+            width={100}
+            height={100}
+            className="w-24 h-24 object-contain"
+            priority
+          />
           <h1 className="text-3xl font-bold mt-4 text-primary">
             {siteName}
           </h1>
@@ -118,7 +97,7 @@ export default function LoginForm({
 
         <CardContent className="space-y-5 px-6 pb-8">
           {error && (
-            <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4 flex items-start gap-3 animate-in slide-in-from-top-2 duration-300">
+            <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4 flex items-start gap-3">
               <div className="p-1.5 bg-red-100 rounded-full mt-0.5">
                 <svg className="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -131,11 +110,10 @@ export default function LoginForm({
             </div>
           )}
 
-          {/* Google Button */}
           <Button
             type="button"
             variant="outline"
-            className="w-full h-11 border-2 hover:border-primary hover:bg-primary/5 transition-all group"
+            className="w-full h-11 border-2 hover:border-primary hover:bg-primary/5 transition-all"
             onClick={handleGoogle}
             disabled={loadingGoogle}
           >
@@ -161,7 +139,6 @@ export default function LoginForm({
             <Separator className="flex-1" />
           </div>
 
-          {/* Email/Password Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label className="text-sm font-medium">Correo electrónico</Label>
@@ -214,7 +191,7 @@ export default function LoginForm({
 
             <Button 
               type="submit" 
-              className="w-full h-11 hover:text-white hover:bg-primary/90 shadow-lg shadow-primary/30 transition-all bg-primary"
+              className="w-full h-11 bg-primary text-white hover:bg-primary/90 shadow-lg shadow-primary/30 transition-all"
               disabled={loading}
             >
               {loading ? (
@@ -223,7 +200,7 @@ export default function LoginForm({
                   Ingresando...
                 </span>
               ) : (
-                <span className="flex items-center gap-2 ">
+                <span className="flex items-center gap-2">
                   Ingresar
                   <FontAwesomeIcon icon={faArrowRight} className="w-4 h-4" />
                 </span>
@@ -231,7 +208,6 @@ export default function LoginForm({
             </Button>
           </form>
 
-          {/* Registro */}
           <div className="text-center pt-2">
             <p className="text-sm text-muted-foreground">
               ¿No tienes cuenta?{' '}
@@ -242,24 +218,6 @@ export default function LoginForm({
                 Regístrate aquí
               </Link>
             </p>
-          </div>
-
-          {/* Footer con roles */}
-          <div className="flex justify-center gap-4 pt-2">
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <FontAwesomeIcon icon={faBuilding} className="w-3 h-3" />
-              <span>Inmobiliarias</span>
-            </div>
-            <div className="w-px h-4 bg-gray-200" />
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <FontAwesomeIcon icon={faHome} className="w-3 h-3" />
-              <span>Propietarios</span>
-            </div>
-            <div className="w-px h-4 bg-gray-200" />
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <FontAwesomeIcon icon={faShieldAlt} className="w-3 h-3" />
-              <span>Administradores</span>
-            </div>
           </div>
         </CardContent>
       </Card>

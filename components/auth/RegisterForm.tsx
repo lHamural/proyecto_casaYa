@@ -28,13 +28,11 @@ import {
   faEnvelope, 
   faPhone, 
   faLock, 
-  faHome,
   faArrowRight,
   faUserTag,
   faEye,
   faEyeSlash,
   faCheckCircle,
-  faExclamationCircle
 } from '@fortawesome/free-solid-svg-icons'
 import { cn } from '@/lib/utils'
 
@@ -113,34 +111,17 @@ export default function RegisterForm({
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-blue-50/30 p-4">
-      {/* Elementos decorativos de fondo */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/20 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-primary/20 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
-      </div>
-
-      <Card className="w-full max-w-md relative z-10 border-0 shadow-2xl shadow-primary/10 bg-white/80 backdrop-blur-xl">
-        {/* Logo y nombre de la página - Logo más grande */}
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <Card className="w-full max-w-md border-0 shadow-2xl shadow-primary/10 bg-white/80 backdrop-blur-xl">
         <div className="flex flex-col items-center pt-10 px-6">
-          <div className="relative">
-            {logoUrl ? (
-              <Image 
-                src={logoUrl}
-                alt={siteName}
-                width={100}
-                height={100}
-                className="w-24 h-24 object-contain"
-                priority
-              />
-            ) : (
-              <div className="text-primary">
-                <FontAwesomeIcon icon={faHome} className="w-16 h-16" />
-              </div>
-            )}
-          </div>
-          
+          <Image 
+            src={logoUrl}
+            alt={siteName}
+            width={100}
+            height={100}
+            className="w-24 h-24 object-contain"
+            priority
+          />
           <h1 className="text-3xl font-bold mt-4 text-primary">
             {siteName}
           </h1>
@@ -158,9 +139,9 @@ export default function RegisterForm({
 
         <CardContent className="space-y-5 px-6 pb-8">
           {error && (
-            <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4 flex items-start gap-3 animate-in slide-in-from-top-2 duration-300">
+            <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4 flex items-start gap-3">
               <div className="p-1.5 bg-red-100 rounded-full mt-0.5">
-                <FontAwesomeIcon icon={faExclamationCircle} className="w-4 h-4 text-red-600" />
+                <FontAwesomeIcon icon={faCheckCircle} className="w-4 h-4 text-red-600" />
               </div>
               <div>
                 <p className="font-medium text-red-800">Error</p>
@@ -170,7 +151,6 @@ export default function RegisterForm({
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Nombre */}
             <div className="space-y-2">
               <Label className="text-sm font-medium">Nombre completo *</Label>
               <div className="relative">
@@ -187,7 +167,6 @@ export default function RegisterForm({
               </div>
             </div>
 
-            {/* Email */}
             <div className="space-y-2">
               <Label className="text-sm font-medium">Email *</Label>
               <div className="relative">
@@ -205,7 +184,6 @@ export default function RegisterForm({
               </div>
             </div>
 
-            {/* Teléfono */}
             <div className="space-y-2">
               <Label className="text-sm font-medium">Teléfono</Label>
               <div className="relative">
@@ -221,7 +199,6 @@ export default function RegisterForm({
               </div>
             </div>
 
-            {/* Rol */}
             <div className="space-y-2">
               <Label className="text-sm font-medium">Tipo de cuenta</Label>
               <Select
@@ -234,20 +211,20 @@ export default function RegisterForm({
                     <SelectValue placeholder="Selecciona tu rol" />
                   </div>
                 </SelectTrigger>
-                <SelectContent className='bg-primary text-white'>
-                  <SelectItem value="VISITANTE" className="py-2">
+                <SelectContent>
+                  <SelectItem value="VISITANTE">
                     <div>
                       <p className="font-medium">Visitante</p>
                       <p className="text-xs text-muted-foreground">Solo buscar propiedades</p>
                     </div>
                   </SelectItem>
-                  <SelectItem value="PROPIETARIO" className="py-2">
+                  <SelectItem value="PROPIETARIO">
                     <div>
                       <p className="font-medium">Propietario</p>
                       <p className="text-xs text-muted-foreground">Publicar mis propiedades</p>
                     </div>
                   </SelectItem>
-                  <SelectItem value="INMOBILIARIA" className="py-2">
+                  <SelectItem value="INMOBILIARIA">
                     <div>
                       <p className="font-medium">Inmobiliaria</p>
                       <p className="text-xs text-muted-foreground">Gestión profesional</p>
@@ -257,7 +234,6 @@ export default function RegisterForm({
               </Select>
             </div>
 
-            {/* Contraseña */}
             <div className="space-y-2">
               <Label className="text-sm font-medium">Contraseña *</Label>
               <div className="relative">
@@ -282,7 +258,6 @@ export default function RegisterForm({
               </div>
             </div>
 
-            {/* Confirmar contraseña */}
             <div className="space-y-2">
               <Label className="text-sm font-medium">Confirmar contraseña *</Label>
               <div className="relative">
@@ -321,12 +296,12 @@ export default function RegisterForm({
 
             <Button 
               type="submit" 
-              className="w-full h-11 bg-primary text-primary  hover:text-white hover:bg-primary/90 shadow-lg shadow-primary/30 transition-all"
+              className="w-full h-11 bg-primary text-white hover:bg-primary/90 shadow-lg shadow-primary/30 transition-all"
               disabled={loading}
             >
               {loading ? (
                 <span className="flex items-center gap-2">
-                  <span className="w-4 h-4 border-2  border-white/30 border-t-white rounded-full animate-spin" />
+                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   Creando cuenta...
                 </span>
               ) : (
@@ -338,7 +313,6 @@ export default function RegisterForm({
             </Button>
           </form>
 
-          {/* Login */}
           <div className="text-center pt-2">
             <p className="text-sm text-muted-foreground">
               ¿Ya tienes cuenta?{' '}
@@ -349,24 +323,6 @@ export default function RegisterForm({
                 Inicia sesión
               </Link>
             </p>
-          </div>
-
-          {/* Footer con roles */}
-          <div className="flex justify-center gap-4 pt-2">
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <FontAwesomeIcon icon={faUser} className="w-3 h-3" />
-              <span>Visitantes</span>
-            </div>
-            <div className="w-px h-4 bg-gray-200" />
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <FontAwesomeIcon icon={faHome} className="w-3 h-3" />
-              <span>Propietarios</span>
-            </div>
-            <div className="w-px h-4 bg-gray-200" />
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <FontAwesomeIcon icon={faUserTag} className="w-3 h-3" />
-              <span>Inmobiliarias</span>
-            </div>
           </div>
         </CardContent>
       </Card>

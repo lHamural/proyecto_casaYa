@@ -30,6 +30,7 @@ interface DashboardSidebarProps {
   userName: string
   userRole: string
   userInitial: string
+  userAvatar?: string | null
   onLogout: () => void
   sidebarOpen: boolean
   onCloseSidebar: () => void
@@ -41,6 +42,7 @@ export function DashboardSidebar({
   userName, 
   userRole, 
   userInitial, 
+  userAvatar,
   onLogout,
   sidebarOpen,
   onCloseSidebar
@@ -140,9 +142,13 @@ export function DashboardSidebar({
       {/* Sidebar Footer */}
       <div className="dashboard-sidebar-footer">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center text-white font-semibold">
-            {userInitial}
-          </div>
+          {userAvatar ? (
+            <Image src={userAvatar} alt={userName} width={36} height={36} className="w-9 h-9 rounded-full object-cover" />
+          ) : (
+            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center text-white font-semibold">
+              {userInitial}
+            </div>
+          )}
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium truncate">{userName}</p>
             <p className="text-xs text-gray-400 truncate">{getRoleDisplay(userRole)}</p>

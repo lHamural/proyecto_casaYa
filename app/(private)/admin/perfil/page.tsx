@@ -3,10 +3,7 @@ import { auth } from '@/auth'
 import { prisma } from '@/lib/prisma'
 import { redirect } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { 
@@ -16,22 +13,20 @@ import {
   faCalendarAlt, 
   faShieldAlt, 
   faSave,
-  faCamera,
   faBuilding,
   faHome,
   faCrown,
   faUserCog,
   faUserCheck,
   faClock,
-  faImage,
   faGem,
   faRocket,
   faStar,
-  faInfinity,
   faEdit,
   faArrowRight
 } from '@fortawesome/free-solid-svg-icons'
 import PerfilForm from '@/components/perfil/PerfilForm'
+import AvatarUpload from '@/components/perfil/AvatarUpload'
 import { cn } from '@/lib/utils'
 
 export default async function PerfilPage() {
@@ -170,18 +165,11 @@ export default async function PerfilPage() {
               <CardContent className="pt-6">
                 <div className="flex flex-col items-center text-center">
                   <div className="relative">
-                    <Avatar className="w-28 h-28 border-4 border-primary/20">
-                      <AvatarFallback className="text-3xl bg-gradient-to-br from-primary/10 to-primary/20 text-primary font-bold">
-                        {getInitials(usuario.name || 'U')}
-                      </AvatarFallback>
-                    </Avatar>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="absolute -bottom-2 -right-2 rounded-full w-9 h-9 p-0 border-2 border-primary bg-white hover:bg-primary/10"
-                    >
-                      <FontAwesomeIcon icon={faCamera} className="w-4 h-4 text-primary" />
-                    </Button>
+                    <AvatarUpload
+                      avatarUrl={usuario.avatar}
+                      userName={usuario.name || 'U'}
+                      initials={getInitials(usuario.name || 'U')}
+                    />
                   </div>
                   <h3 className="text-xl font-bold mt-4">{usuario.name}</h3>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
