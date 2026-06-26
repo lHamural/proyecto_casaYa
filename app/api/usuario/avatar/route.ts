@@ -1,12 +1,15 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@/auth'
 import { prisma } from '@/lib/prisma'
-import sharp from 'sharp'
-import path from 'path'
-import fs from 'fs'
-import { v4 as uuidv4 } from 'uuid'
+import { v2 as cloudinary } from 'cloudinary'
 
-const AVATAR_DIR = path.join(process.cwd(), 'public', 'avatars')
+export const runtime = 'nodejs'
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+})
 
 export async function POST(request: Request) {
   try {
@@ -31,23 +34,26 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'La imagen no puede superar 2MB' }, { status: 400 })
     }
 
-    if (!fs.existsSync(AVATAR_DIR)) {
-      fs.mkdirSync(AVATAR_DIR, { recursive: true })
-    }
-
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
 
-    const uuid = uuidv4()
-    const filename = `${uuid}.webp`
-    const outputPath = path.join(AVATAR_DIR, filename)
+    const result = await new Promise<any>((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        {
+          folder: 'casaya/avatars',
+          transformation: [
+            { width: 200, height: 200, crop: 'fill', gravity: 'face' },
+            { quality: 'auto', fetch_format: 'auto' },
+          ],
+        },
+        (error, result) => {
+          if (error) reject(error)
+          else resolve(result)
+        }
+      ).end(buffer)
+    })
 
-    await sharp(buffer)
-      .resize(200, 200, { fit: 'cover' })
-      .webp({ quality: 80 })
-      .toFile(outputPath)
-
-    const avatarUrl = `/avatars/${filename}`
+    const avatarUrl = result.secure_url
 
     await prisma.user.update({
       where: { id: session.user.id },
