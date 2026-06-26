@@ -197,7 +197,7 @@ export default async function MisPropiedadesPage() {
               </p>
             </div>
             <Button asChild size="sm" variant="outline" className="border-amber-300 text-amber-700 hover:bg-amber-50">
-              <Link href="/dashboard/suscripcion">
+              <Link href="/suscriptor/suscripcion">
                 <FontAwesomeIcon icon={faArrowRight} className="mr-2" />
                 Actualizar Plan
               </Link>

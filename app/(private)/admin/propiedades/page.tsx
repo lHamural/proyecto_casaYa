@@ -150,7 +150,7 @@ export default async function MisPropiedadesPage() {
             </p>
           </div>
           <Button asChild variant="outline" className="border-amber-300 text-amber-700 hover:bg-amber-50 whitespace-nowrap">
-            <Link href="/dashboard/suscripcion">Actualizar Plan</Link>
+            <Link href="/admin/suscripcion">Actualizar Plan</Link>
           </Button>
         </div>
       )}

@@ -11,11 +11,11 @@ export default async function NuevaPropiedadPage() {
   const limits = await getPlanLimits(session.user.id)
 
   if (!limits) {
-    redirect('/dashboard/suscripcion')
+    redirect('/suscriptor/suscripcion')
   }
 
   if (!limits.canPublish) {
-    redirect('/dashboard/propiedades?error=limite_alcanzado')
+    redirect('/suscriptor/propiedades?error=limite_alcanzado')
   }
 
   const [tipos, categorias, caracteristicas] = await Promise.all([

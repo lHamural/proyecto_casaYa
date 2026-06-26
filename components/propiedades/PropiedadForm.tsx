@@ -686,7 +686,7 @@ export default function PropiedadForm({
               El recorrido virtual está disponible en el plan <strong className="text-purple-700">Premium</strong>.
             </p>
             <Button variant="outline" size="sm" className="mt-4 rounded-xl" asChild>
-              <a href="/dashboard/suscripcion">Actualizar plan</a>
+              <a href={session?.user?.role === 'SUPERADMIN' ? '/admin/suscripcion' : '/suscriptor/suscripcion'}>Actualizar plan</a>
             </Button>
           </CardContent>
         </Card>
