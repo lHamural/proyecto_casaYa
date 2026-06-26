@@ -1,23 +1,17 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  output: "standalone",
-  
-  // 1. Quita `domains`, ya tienes `remotePatterns`
   images: {
     remotePatterns: [
       {
-    protocol: 'https',
-    hostname: 'res.cloudinary.com',
-  },
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+      },
     ],
   },
 
-  // 2. `serverComponentsExternalPackages` se movió fuera de `experimental`
   serverExternalPackages: ['@prisma/client', 'bcryptjs', 'sharp'],
 
-  // 3. El rewrite falla porque NEXT_PUBLIC_UPLOAD_URL no está definida en Railway
-  // Debes manejar el caso donde sea undefined
   async rewrites() {
     const uploadUrl = process.env.NEXT_PUBLIC_UPLOAD_URL
 
