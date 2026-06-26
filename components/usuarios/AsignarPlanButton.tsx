@@ -1,4 +1,4 @@
-// components/ui/admin/usuarios/AsignarPlanButton.tsx
+// components/usuarios/AsignarPlanButton.tsx
 'use client'
 
 import { useState, useEffect } from 'react'

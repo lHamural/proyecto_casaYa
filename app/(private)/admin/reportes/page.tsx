@@ -45,7 +45,7 @@ import {
   faPrint
 } from '@fortawesome/free-solid-svg-icons'
 import Link from 'next/link'
-import { ReporteFiltros } from '@/components/ui/admin/ReporteFiltros'
+import { ReporteFiltros } from '@/components/admin/ReporteFiltros'
 import { cn } from '@/lib/utils'
 
 interface PageProps {

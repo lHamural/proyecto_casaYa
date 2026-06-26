@@ -95,6 +95,10 @@ export async function POST(request: Request) {
       stripeCustomerId = customer.id
     }
 
+    const successPath = session.user.role === 'SUPERADMIN'
+      ? '/admin/suscripcion'
+      : '/suscriptor/suscripcion'
+
     // Crear sesión de checkout
     const checkoutSession = await stripe.checkout.sessions.create({
       customer: stripeCustomerId,
@@ -106,8 +110,8 @@ export async function POST(request: Request) {
           quantity: 1,
         },
       ],
-      success_url: `${process.env.NEXTAUTH_URL}/admin/suscripcion?success=true&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXTAUTH_URL}/admin/suscripcion?cancelled=true`,
+      success_url: `${process.env.NEXTAUTH_URL}${successPath}?success=true&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.NEXTAUTH_URL}/suscriptor/suscripcion?cancelled=true`,
       metadata: {
         userId: session.user.id,
         planId: plan.id,

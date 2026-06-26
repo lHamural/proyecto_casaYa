@@ -1,4 +1,3 @@
-// components/web/Chatbot.tsx
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
@@ -25,8 +24,9 @@ interface Message {
   id: string
   role: 'user' | 'bot'
   content: string
-  createdAt: string
 }
+
+const STORAGE_KEY = 'casaya_chat_messages'
 
 export function Chatbot() {
   const { data: session } = useSession()
@@ -35,106 +35,75 @@ export function Chatbot() {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
-  const [sessionToken, setSessionToken] = useState<string>('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  // Inicializar sesión de chat
   useEffect(() => {
-    const token = localStorage.getItem('chatSessionToken')
-    if (token) {
-      setSessionToken(token)
-      cargarMensajes(token)
-    } else {
-      const newToken = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
-      localStorage.setItem('chatSessionToken', newToken)
-      setSessionToken(newToken)
+    const saved = localStorage.getItem(STORAGE_KEY)
+    if (saved) {
+      try {
+        setMessages(JSON.parse(saved))
+      } catch { }
     }
   }, [])
 
-  const cargarMensajes = async (token: string) => {
-    try {
-      const res = await fetch(`/api/chat/historial?sessionToken=${token}`)
-      if (res.ok) {
-        const data = await res.json()
-        setMessages(data.messages || [])
-      }
-    } catch (error) {
-      console.error('Error al cargar mensajes:', error)
-    }
-  }
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(messages))
+  }, [messages])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-// components/web/Chatbot.tsx
-// Actualiza la función handleSend
+  const handleSend = async () => {
+    if (!input.trim() || loading) return
 
-const handleSend = async () => {
-  if (!input.trim() || loading) return
+    const mensaje = input.trim()
+    setInput('')
+    setLoading(true)
 
-  const mensaje = input.trim()
-  setInput('')
-  setLoading(true)
-
-  // Agregar mensaje del usuario optimista
-  const userMessage: Message = {
-    id: `user_${Date.now()}`,
-    role: 'user',
-    content: mensaje,
-    createdAt: new Date().toISOString(),
-  }
-  setMessages(prev => [...prev, userMessage])
-
-  try {
-    console.log('📤 Enviando mensaje:', mensaje)
-    
-    const res = await fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mensaje, sessionToken }),
-    })
-
-    console.log('📥 Status:', res.status)
-
-    if (!res.ok) {
-      const errorData = await res.json()
-      console.error('❌ Error:', errorData)
-      throw new Error(errorData.error || 'Error en el servidor')
+    const userMessage: Message = {
+      id: `user_${Date.now()}`,
+      role: 'user',
+      content: mensaje,
     }
+    setMessages(prev => [...prev, userMessage])
 
-    const data = await res.json()
-    console.log('📥 Datos recibidos:', data)
+    try {
+      // Enviar historial completo para mantener contexto de conversación
+      const historial = messages.map(m => ({
+        role: m.role,
+        content: m.content,
+      }))
 
-    // ✅ Actualizar mensajes con la respuesta del servidor
-    if (data.messages && data.messages.length > 0) {
-      console.log('✅ Actualizando mensajes:', data.messages.length)
-      setMessages(data.messages)
-    } else if (data.respuesta) {
-      // Fallback si solo devuelve respuesta
-      const botMessage: Message = {
-        id: `bot_${Date.now()}`,
-        role: 'bot',
-        content: data.respuesta,
-        createdAt: new Date().toISOString(),
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mensaje, historial }),
+      })
+
+      if (!res.ok) throw new Error('Error en el servidor')
+
+      const data = await res.json()
+
+      if (data.respuesta) {
+        const botMessage: Message = {
+          id: `bot_${Date.now()}`,
+          role: 'bot',
+          content: data.respuesta,
+        }
+        setMessages(prev => [...prev, botMessage])
       }
-      setMessages(prev => [...prev, botMessage])
-    } else {
-      console.warn('⚠️ No se recibieron mensajes del servidor')
+    } catch {
+      const errorMessage: Message = {
+        id: `bot_error_${Date.now()}`,
+        role: 'bot',
+        content: 'Lo siento, hubo un error al procesar tu mensaje. Por favor, intenta de nuevo.',
+      }
+      setMessages(prev => [...prev, errorMessage])
+    } finally {
+      setLoading(false)
     }
-  } catch (error) {
-    console.error('❌ Error al enviar mensaje:', error)
-    const errorMessage: Message = {
-      id: `bot_error_${Date.now()}`,
-      role: 'bot',
-      content: 'Lo siento, hubo un error al procesar tu mensaje. Por favor, intenta de nuevo.',
-      createdAt: new Date().toISOString(),
-    }
-    setMessages(prev => [...prev, errorMessage])
-  } finally {
-    setLoading(false)
   }
-}
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -175,7 +144,6 @@ const handleSend = async () => {
       <div className={`bg-white rounded-2xl shadow-2xl overflow-hidden transition-all duration-300 ${
         isMinimized ? 'h-14' : 'h-[500px] max-h-[80vh]'
       }`}>
-        {/* Header */}
         <div className="bg-primary text-white px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
@@ -204,7 +172,6 @@ const handleSend = async () => {
 
         {!isMinimized && (
           <>
-            {/* Mensajes */}
             <div className="flex-1 overflow-y-auto p-4 h-[340px] bg-gray-50">
               {messages.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-center">
@@ -272,7 +239,6 @@ const handleSend = async () => {
               )}
             </div>
 
-            {/* Input */}
             <div className="p-3 border-t border-gray-200 bg-white">
               <div className="flex gap-2">
                 <input
@@ -293,14 +259,6 @@ const handleSend = async () => {
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                 </Button>
               </div>
-              {!session && (
-                <p className="text-xs text-muted-foreground mt-2 text-center">
-                  <Link href="/login" className="text-primary hover:underline">
-                    Inicia sesión
-                  </Link>
-                  {' '}para guardar tu historial de conversación
-                </p>
-              )}
             </div>
           </>
         )}

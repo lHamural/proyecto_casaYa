@@ -364,6 +364,7 @@ export default async function SuscriptorDashboard() {
                         <img 
                           src={p.images[0].thumbPath} 
                           alt={p.title} 
+                          loading="lazy"
                           className="w-full h-full object-cover"
                         />
                       ) : (

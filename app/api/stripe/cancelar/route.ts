@@ -28,10 +28,8 @@ export async function POST() {
       cancel_at_period_end: true,
     })
 
-    await prisma.subscription.update({
-  where: { id: subscription.id },
-      data: { status: 'CANCELLED' },
-    })
+    // NO marcar como CANCELLED aún — la suscripción sigue activa hasta fin del período
+    // El webhook customer.subscription.deleted se encargará de actualizar el estado
 
     return NextResponse.json({
       message: 'Suscripción cancelada. Seguirá activa hasta el fin del período.',

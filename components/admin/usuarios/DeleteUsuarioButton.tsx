@@ -1,4 +1,4 @@
-// components/ui/admin/usuarios/DeleteUsuarioButton.tsx
+// components/admin/usuarios/DeleteUsuarioButton.tsx
 'use client'
 
 import { useState } from 'react'

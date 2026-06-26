@@ -1,4 +1,4 @@
-// components/ui/admin/planes/DeletePlanButton.tsx
+// components/admin/planes/DeletePlanButton.tsx
 'use client'
 
 import { useState } from 'react'

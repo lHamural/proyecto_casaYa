@@ -37,6 +37,24 @@ async function main() {
     },
   })
 
+  const planBasico = await prisma.plan.upsert({
+    where: { name: 'BASICO' },
+    update: {},
+    create: {
+      name: 'BASICO',
+      price: 9.99,
+      currency: 'USD',
+      description: 'Plan básico para empezar a crecer',
+      maxProperties: 5,
+      maxImages: 5,
+      allowVirtualTour: false,
+      allowHighlight: false,
+      allowWhatsapp: true,
+      allowStats: false,
+      durationDays: 30,
+    },
+  })
+
   const planPlatino = await prisma.plan.upsert({
     where: { name: 'PLATINO' },
     update: {},
@@ -74,7 +92,7 @@ async function main() {
     },
   })
 
-  console.log('✅ Planes creados:', planGratuito.name, planPlatino.name, planPremium.name)
+  console.log('✅ Planes creados:', planGratuito.name, planBasico.name, planPlatino.name, planPremium.name)
 
   // ─────────────────────────────────────────
   // TIPOS DE OPERACIÓN

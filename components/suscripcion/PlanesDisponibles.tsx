@@ -39,7 +39,7 @@ const planStyles: Record<string, { border: string; badge: string; button: string
     badge: 'bg-blue-100 text-blue-700',
     button: 'outline',
   },
-  PROFESIONAL: {
+  PLATINO: {
     border: 'border-purple-200 shadow-purple-100',
     badge: 'bg-purple-100 text-purple-700',
     button: 'default',
@@ -88,7 +88,7 @@ export default function PlanesDisponibles({
   }
 
   // Ordenar planes: GRATUITO, BASICO, PROFESIONAL, PREMIUM
- const ordenPlanes: Record<string, number> = { GRATUITO: 0, BASICO: 1, PROFESIONAL: 2, PREMIUM: 3 }
+ const ordenPlanes: Record<string, number> = { GRATUITO: 0, BASICO: 1, PLATINO: 2, PREMIUM: 3 }
   const planesOrdenados = [...planes].sort((a, b) => ordenPlanes[a.name] - ordenPlanes[b.name])
 
   return (
@@ -111,7 +111,7 @@ export default function PlanesDisponibles({
           const esPlanActual = plan.name === planActual
           const esGratuito = plan.price === 0
           const styles = planStyles[plan.name] || planStyles.GRATUITO
-          const isPopular = plan.name === 'PROFESIONAL'
+          const isPopular = plan.name === 'PLATINO'
 
           return (
             <Card

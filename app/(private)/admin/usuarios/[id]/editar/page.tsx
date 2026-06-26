@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma'
-import UsuarioForm from '@/components/ui/admin/usuarios/UsuarioForm'
+import UsuarioForm from '@/components/admin/usuarios/UsuarioForm'
 import { notFound } from 'next/navigation'
 
 export default async function EditarUsuarioPage({

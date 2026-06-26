@@ -1,4 +1,4 @@
-import UsuarioForm from '@/components/ui/admin/usuarios/UsuarioForm'
+import UsuarioForm from '@/components/admin/usuarios/UsuarioForm'
 
 export default function NuevoUsuarioPage() {
   return (

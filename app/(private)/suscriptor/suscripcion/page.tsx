@@ -1,6 +1,7 @@
 // app/(private)/admin/suscripcion/page.tsx
 import { auth } from '@/auth'
 import { prisma } from '@/lib/prisma'
+import { ensureSubscriptionFromSession } from '@/lib/services/subscription'
 import { redirect } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -55,7 +56,12 @@ export default async function SuscripcionPage({
   const session = await auth()
   if (!session?.user) redirect('/login')
 
-  const { success, cancelled } = await searchParams
+  const { success, cancelled, session_id } = await searchParams
+
+  // Fallback manual si el webhook no se ejecutó
+  if (session_id) {
+    await ensureSubscriptionFromSession(session_id, session.user.id)
+  }
 
   // Obtener suscripción activa
   const subscriptionActiva = await prisma.subscription.findFirst({

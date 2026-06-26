@@ -1,4 +1,4 @@
-  import PlanForm from '@/components/ui/admin/planes/PlanForm'
+import PlanForm from '@/components/admin/planes/PlanForm'
 
   export default function NuevoPlanPage() {
     return (

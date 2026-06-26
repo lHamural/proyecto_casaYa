@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/table'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Plus, Pencil, Mail, Phone, Users, UserCheck, Building, Home, Crown } from 'lucide-react'
-import DeleteUsuarioButton from '@/components/ui/admin/usuarios/DeleteUsuarioButton'
+import DeleteUsuarioButton from '@/components/admin/usuarios/DeleteUsuarioButton'
 import { cn } from '@/lib/utils'
 
 const rolColors: Record<string, string> = {

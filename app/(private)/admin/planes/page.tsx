@@ -30,7 +30,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 // ✅ Importar faWhatsapp desde brands
 import { faWhatsapp } from '@fortawesome/free-brands-svg-icons'
-import DeletePlanButton from '@/components/ui/admin/planes/DeletePlanButton'
+import DeletePlanButton from '@/components/admin/planes/DeletePlanButton'
 
 export default async function PlanesPage() {
   const planes = await prisma.plan.findMany({

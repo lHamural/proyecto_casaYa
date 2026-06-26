@@ -7,7 +7,7 @@ import { X, Image as ImageIcon, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import Image from 'next/image'
-import type { OurFileRouter } from '@/lib/updaloadting'
+import type { OurFileRouter } from '@/lib/uploadthing'
 
 interface ImageUploadProps {
   onImagesChange: (urls: string[]) => void

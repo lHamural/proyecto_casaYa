@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma'
-import PlanForm from '@/components/ui/admin/planes/PlanForm'
+import PlanForm from '@/components/admin/planes/PlanForm'
 import { notFound } from 'next/navigation'
 
 export default async function EditarPlanPage({

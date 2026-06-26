@@ -1,4 +1,4 @@
-// lib/updaloadting.ts
+// lib/uploadthing.ts
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { auth } from "@/auth";
 
